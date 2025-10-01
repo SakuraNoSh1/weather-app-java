@@ -182,7 +182,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>☁️ Weather app Jesus</h1>
+        <h1>☁️ Weather App</h1>
         
         <div class="search-box">
             <input type="text" id="cityInput" placeholder="Ingresa una ciudad..." />
@@ -220,7 +220,7 @@
     </div>
 
     <script>
-        const API_URL = 'https://lightsteelblue-stinkbug-981609.hostingersite.com/weather.php?city=';
+        const API_URL = 'http://localhost:8080/api/weather/city/';
 
         // Permitir buscar con Enter
         document.getElementById('cityInput').addEventListener('keypress', function(e) {
