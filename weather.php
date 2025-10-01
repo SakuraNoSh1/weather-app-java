@@ -1,23 +1,13 @@
 <?php
-// weather.php - Proxy hacia OpenWeatherMap
-// Ubícalo en public_html
+// weather.php - Proxy hacia OpenWeatherMap con cURL
 
-// Configura tu API key de OpenWeatherMap
 $API_KEY = "c3a766aa374fe4ffad1a644e51e0e225";
 
-// Permitir acceso desde tu dominio (seguridad básica)
-$allowed_origins = [
-    "https://lightsteelblue-stinkbug-981609.hostingersite.com",
-    "http://lightsteelblue-stinkbug-981609.hostingersite.com"
-];
-
-if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed_origins)) {
-    header("Access-Control-Allow-Origin: " . $_SERVER['HTTP_ORIGIN']);
-}
-
+// Permitir acceso desde tu dominio (CORS opcional)
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=utf-8");
 
-// Validar parámetro de ciudad
+// Validar parámetro city
 if (!isset($_GET['city']) || trim($_GET['city']) === "") {
     http_response_code(400);
     echo json_encode(["error" => "city_missing"]);
@@ -27,12 +17,11 @@ if (!isset($_GET['city']) || trim($_GET['city']) === "") {
 $city = urlencode(trim($_GET['city']));
 $url = "https://api.openweathermap.org/data/2.5/weather?q={$city}&appid={$API_KEY}&units=metric&lang=es";
 
-// --- Cache simple para no gastar demasiadas consultas ---
+// Cache simple para reducir llamadas
 $cacheDir = __DIR__ . "/cache";
 if (!is_dir($cacheDir)) {
     mkdir($cacheDir, 0755, true);
 }
-
 $cacheFile = $cacheDir . "/" . md5($url) . ".json";
 $cacheTime = 600; // 10 minutos
 
@@ -41,12 +30,26 @@ if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
     exit;
 }
 
-// --- Llamada a la API ---
-$response = @file_get_contents($url);
+// --- Llamada a la API usando cURL ---
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 
-if ($response === false) {
-    http_response_code(500);
-    echo json_encode(["error" => "fetch_failed"]);
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlError = curl_error($ch);
+curl_close($ch);
+
+if ($response === false || $httpCode !== 200) {
+    http_response_code($httpCode ?: 500);
+    echo json_encode([
+        "error" => "fetch_failed",
+        "http_code" => $httpCode,
+        "curl_error" => $curlError
+    ]);
     exit;
 }
 
