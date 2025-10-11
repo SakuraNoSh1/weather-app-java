@@ -182,7 +182,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>☁️ Weather App</h1>
+        <h1>☁️ Jesus Caraballo soft coconut Aplicacion del tiempo</h1>
         
         <div class="search-box">
             <input type="text" id="cityInput" placeholder="Ingresa una ciudad..." />
@@ -220,7 +220,8 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:8080/api/weather/city/';
+        const API_URL = 'http://44.246.229.33/api/weather/city/';
+
 
         // Permitir buscar con Enter
         document.getElementById('cityInput').addEventListener('keypress', function(e) {
@@ -315,5 +316,17 @@
             getWeather();
         };
     </script>
+
+<script>
+fetch('http://44.246.229.33/api/weather/city/Santiago')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('temperature').innerText = data.temperature + '°C';
+        document.getElementById('description').innerText = data.description;
+    })
+    .catch(err => console.error(err));
+</script>
+
+
 </body>
 </html>

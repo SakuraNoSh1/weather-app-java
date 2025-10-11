@@ -8,12 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/weather")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")  // permite llamadas desde cualquier dominio
 public class WeatherController {
 
     @Autowired
     private WeatherService weatherService;
 
+    // Endpoint principal
     @GetMapping("/city/{cityName}")
     public ResponseEntity<WeatherData> getWeatherByCity(@PathVariable String cityName) {
         try {
@@ -24,6 +25,7 @@ public class WeatherController {
         }
     }
 
+    // Endpoint de prueba
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("¡API funcionando correctamente!");
