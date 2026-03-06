@@ -8,12 +8,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/SakuraNoSh1/weather-app-java.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'mvn clean package'
