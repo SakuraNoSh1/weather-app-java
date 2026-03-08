@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_IMAGE = "jesusc/weather-app-java"
+        DOCKER_IMAGE = "jesusacs/apirepository"
     }
 
     stages {
@@ -26,7 +26,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t $DOCKER_IMAGE:latest ."
+                bat "docker build -t ${DOCKER_IMAGE}:latest ."
             }
         }
 
@@ -44,7 +44,7 @@ pipeline {
 
         stage('Push Image') {
             steps {
-                bat "docker push $DOCKER_IMAGE:latest"
+                bat "docker push ${DOCKER_IMAGE}:latest"
             }
         }
     }
