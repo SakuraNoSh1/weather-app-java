@@ -24,6 +24,14 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    bat 'mvn sonar:sonar'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 bat "docker build -t ${DOCKER_IMAGE}:latest ."
